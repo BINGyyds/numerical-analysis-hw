@@ -1,0 +1,79 @@
+\documentclass[11pt, a4paper]{ctexart} % 使用 ctexart 支持中文
+
+% 引入我们自定义的样式文件
+\usepackage{homework_style}
+
+\begin{document}
+
+% =========================================
+% 第 4 题
+% =========================================
+\begin{problem}{4. 设 $x > 0$， $x$ 的相对误差为 $\delta$，求 $\ln x$ 的绝对误差。}
+\end{problem}
+
+\begin{solution}
+    设 $x$ 的近似值为 $x^*$。
+    根据相对误差的定义有：
+    \[
+        e_r(x^*) = \frac{x - x^*}{x} = \delta \implies 1 - \frac{x^*}{x} = \delta \implies \frac{x}{x^*} = \frac{1}{1-\delta}
+    \]
+    
+    绝对误差 $e(\ln x^*)$ 为：
+    \[
+        e(\ln x^*) = \ln(x) - \ln(x^*) = \ln\left(\frac{x}{x^*}\right) = \ln\left(\frac{1}{1-\delta}\right) = -\ln(1-\delta)
+    \]
+    
+    若 $\delta \to 0$（即误差很小时），利用微分近似有：
+    \[
+        e(\ln x^*) \approx \ln'(x^*) (x - x^*) = \frac{x - x^*}{x^*} \approx \delta
+    \]
+    （注：当误差极小时，$\frac{x-x^*}{x^*} \approx \frac{x-x^*}{x} = \delta$）。
+\end{solution}
+
+
+% =========================================
+% 第 7 题
+% =========================================
+\begin{problem}{7. 正方形边长约 100 cm，测量边长时误差多大，才能保证面积的误差不超过 $1\text{ cm}^2$？}
+\end{problem}
+
+\begin{solution}
+    设边长的实际值为 $x$，近似值为 $x^*$。
+    
+    正方形面积函数为 $A(x) = x^2$。
+    
+    要求面积的绝对误差 $e(A^*) \le 1$。利用误差传播公式（一阶泰勒展开近似）：
+    \[
+        e(A^*) \approx |A'(x^*)| e(x^*) = 2x^* e(x^*) \le 1
+    \]
+    
+    解得边长的允许误差限为：
+    \[
+        e(x^*) \le \frac{1}{2x^*} \approx \frac{1}{2 \times 100} = \frac{1}{200} \text{ cm} \quad (\text{即 } 0.005 \text{ cm})
+    \]
+\end{solution}
+
+
+% =========================================
+% 第 9 题
+% =========================================
+\begin{problem}{9. $s = \frac{1}{2}gt^2$，$g$ 是准确的，对 $t$ 的测量有 $\pm 0.1 \text{ s}$ 的误差。证：当 $t$ 增大时，$s$ 的绝对误差增大，相对误差减小。}
+\end{problem}
+
+\begin{solution}
+    已知对时间的测量误差限为 $e(t^*) = 0.1$。
+    
+    \textbf{绝对误差：} 根据误差传播公式，路程 $s$ 的绝对误差为：
+    \[
+        e(s^*) \approx |s'(t^*)| e(t^*) = gt^* e(t^*) \approx gt e(t^*)
+    \]
+    由于 $g > 0$ 且 $e(t^*) = 0.1 > 0$ 为常数，故当 $t \uparrow$ 时，$s$ 的绝对误差增大。
+    
+    \textbf{相对误差：} 路程 $s$ 的相对误差为：
+    \[
+        e_r(s^*) = \frac{e(s^*)}{s(t^*)} = \frac{gt^* e(t^*)}{\frac{1}{2}g(t^*)^2} = \frac{2e(t^*)}{t^*} \approx \frac{2e(t^*)}{t}
+    \]
+    由于分子 $2e(t^*) = 0.2$ 为常数，故当 $t \uparrow$ 时，分母增大，导致 $s$ 的相对误差 $\downarrow$。得证。
+\end{solution}
+
+\end{document}
