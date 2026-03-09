@@ -1,0 +1,152 @@
+\documentclass[11pt, a4paper]{ctexart} % 使用 ctexart 支持中文
+
+% 引入我们自定义的样式文件
+\usepackage{homework_style}
+
+\begin{document}
+
+% =========================================
+% 第 4 题
+% =========================================
+\begin{problem}{4. 设 $x > 0$， $x$ 的相对误差为 $\delta$，求 $\ln x$ 的绝对误差。}
+\end{problem}
+
+\begin{solution}
+    设 $x$ 的近似值为 $x^*$。
+    根据相对误差的定义有：
+    \[
+        e_r(x^*) = \frac{x - x^*}{x} = \delta \implies 1 - \frac{x^*}{x} = \delta \implies \frac{x}{x^*} = \frac{1}{1-\delta}
+    \]
+    
+    绝对误差 $e(\ln x^*)$ 为：
+    \[
+        e(\ln x^*) = \ln(x) - \ln(x^*) = \ln\left(\frac{x}{x^*}\right) = \ln\left(\frac{1}{1-\delta}\right) = -\ln(1-\delta)
+    \]
+    
+    若 $\delta \to 0$（即误差很小时），利用微分近似有：
+    \[
+        e(\ln x^*) \approx \ln'(x^*) (x - x^*) = \frac{x - x^*}{x^*} \approx \delta
+    \]
+    （注：当误差极小时，$\frac{x-x^*}{x^*} \approx \frac{x-x^*}{x} = \delta$）。
+\end{solution}
+
+
+% =========================================
+% 第 7 题
+% =========================================
+\begin{problem}{7. 正方形边长约 100 cm，测量边长时误差多大，才能保证面积的误差不超过 $1\text{ cm}^2$？}
+\end{problem}
+
+\begin{solution}
+    设边长的实际值为 $x$，近似值为 $x^*$。
+    
+    正方形面积 $A(x) = x^2$。
+    
+    要求面积的绝对误差 $e(A^*) \le 1$。由误差传播公式（一阶泰勒展开近似）：
+    \[
+        e(A^*) \approx |A'(x^*)| e(x^*) = 2x^* e(x^*) \le 1
+    \]
+    
+    解得边长的允许误差限为：
+    \[
+        e(x^*) \le \frac{1}{2x^*} \approx \frac{1}{2 \times 100} = \frac{1}{200} \text{ cm} \quad (\text{即 } 0.005 \text{ cm})
+    \]
+\end{solution}
+
+
+% =========================================
+% 第 9 题
+% =========================================
+\begin{problem}{9. 设 $s = \frac{1}{2}gt^2$，$g$ 是准确的，对 $t$ 的测量有 $\pm 0.1 \text{ s}$ 的误差。证：当 $t$ 增大时，$s$ 的绝对误差增大，相对误差减小。}
+\end{problem}
+
+\begin{myproof}
+    已知对时间的测量误差限为 $e(t^*) = 0.1$。
+    
+    \textbf{绝对误差：} 根据误差传播公式，路程 $s$ 的绝对误差为：
+    \[
+        e(s^*) \approx |s'(t^*)| e(t^*) = gt^* e(t^*) \approx gt e(t^*)
+    \]
+    由于 $g > 0$ 且 $e(t^*) = 0.1 > 0$ 为常数，故当 $t \uparrow$ 时，$s$ 的绝对误差增大。
+    
+    \textbf{相对误差：} 路程 $s$ 的相对误差为：
+    \[
+        e_r(s^*) = \frac{e(s^*)}{s(t^*)} = \frac{gt^* e(t^*)}{\frac{1}{2}g(t^*)^2} = \frac{2e(t^*)}{t^*} \approx \frac{2e(t^*)}{t}
+    \]
+    由于分子 $2e(t^*) = 0.2$ 为常数，故当 $t \uparrow$ 时，分母增大，导致 $s$ 的相对误差 $\downarrow$。得证。
+\end{myproof}
+
+% =========================================
+% 第 10 题
+% =========================================
+\begin{problem}{10. 已知 $\sqrt{783} = 27.983$ 有 5 位有效数字，求 $x^2 - 56x + 1 = 0$ 的两根，使它们至少有 4 位有效数字。}
+\end{problem}
+
+\begin{solution}
+    由求根公式可得：
+    \[
+        x_{1,2} = \frac{56 \pm \sqrt{(-56)^2 - 4}}{2} = 28 \pm \sqrt{783}
+    \]
+    直接计算得较大根 $x_1$：
+    \[
+        x_1 \approx 28 + 27.983 = 55.983
+    \]
+    对于较小根 $x_2$，若直接相减：
+    \[
+        x_2 \approx 28 - 27.983 = 0.017 \quad \text{（此时只有两位有效数字，发生了严重的相消误差）}
+    \]
+    为了保证有效数字的位数，利用韦达定理（根与系数的关系 $x_1 x_2 = 1$）改变运算方式：
+    \[
+        x_2 = \frac{1}{x_1} \approx \frac{1}{55.983} \approx 0.01786
+    \]
+    此时计算出的 $x_2$ 具有 4 位有效数字，满足题目要求。
+\end{solution}
+
+
+% =========================================
+% 第 12 题
+% =========================================
+\begin{problem}{12. 改变下列表达式，使计算结果比较精确}
+\end{problem}
+
+\begin{solution}
+    \textbf{(1)} $\frac{1}{1+2x} - \frac{1-x}{1+x}, \quad |x| \ll 1$
+    
+    当 $|x| \ll 1$ 时，两项均接近 1，直接相减会产生相消误差。将其通分化简：
+    \[
+        \text{原式} = \frac{1+x - (1+2x)(1-x)}{(1+2x)(1+x)} = \frac{1+x - (1+x-2x^2)}{(1+2x)(1+x)} = \frac{2x^2}{1+3x+2x^2}
+    \]
+    化简后将减法转化为了乘除和加法，避免了相消误差。
+    
+    \vspace{1.5em}
+    \textbf{(2)} $\sqrt{x+\frac{1}{x}} - \sqrt{x-\frac{1}{x}}, \quad |x| \gg 1$
+    
+    当 $|x| \gg 1$ 时，根号内两项非常接近，直接相减会导致严重有效数字损失。采用分子有理化：
+    \[
+        \text{原式} = \frac{\left(x+\frac{1}{x}\right) - \left(x-\frac{1}{x}\right)}{\sqrt{x+\frac{1}{x}} + \sqrt{x-\frac{1}{x}}} 
+        = \frac{\frac{2}{x}}{\sqrt{x+\frac{1}{x}} + \sqrt{x-\frac{1}{x}}} 
+        = \frac{2}{\sqrt{x^3+x} + \sqrt{x^3-x}}
+    \]
+    化简后分母变成了两个大数相加，从而提高了计算精度。
+
+    \vspace{1.5em}
+    \textbf{(3)} $\frac{\tan x - \sin x}{x^2}, \quad |x| \ll 1 \text{ 且 } x \neq 0$
+    
+    当 $|x| \ll 1$ 时，$\tan x$ 与 $\sin x$ 的值非常接近，直接相减会导致严重的相消误差（有效数字损失）。
+    利用三角恒等变换将减法转化为乘法：
+    \[
+        \tan x - \sin x = \frac{\sin x}{\cos x} - \sin x = \sin x \left( \frac{1}{\cos x} - 1 \right) = \sin x \frac{1 - \cos x}{\cos x}
+    \]
+    注意，当 $x \to 0$ 时，分子上的 $1 - \cos x$ 依然会产生相消误差。为此，进一步利用半角公式 $1 - \cos x = 2\sin^2\left(\frac{x}{2}\right)$ 进行化简：
+    \[
+        \tan x - \sin x = \sin x \frac{2\sin^2\left(\frac{x}{2}\right)}{\cos x} = 2 \tan x \sin^2\left(\frac{x}{2}\right)
+    \]
+    代回原式，得到：
+    \[
+        \text{原式} = \frac{2 \tan x \sin^2\left(\frac{x}{2}\right)}{x^2}
+    \]
+    化简后的表达式中只有乘除法，彻底消除了两个相近数字相减的操作，从而避免了相消误差，使计算结果更加精确。
+\end{solution}
+
+
+\end{document}

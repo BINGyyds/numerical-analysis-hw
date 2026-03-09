@@ -20,5 +20,10 @@ Thumbs.db
 # VS Code 配置文件 (可选)
 .vscode/
 
-# 最终生成的 PDF（一般不建议把 PDF 放进 Git，除非作为 release，视你的需求而定。如果想提交 PDF 可以把这行删掉）
-*.pdf
+# # 最终生成的 PDF（一般不建议把 PDF 放进 Git，除非作为 release，视你的需求而定。如果想提交 PDF 可以把这行删掉）
+# *.pdf
+
+# 忽略 C++ 编译产生的目录和文件
+build/
+compile_commands.json
+*.cache
