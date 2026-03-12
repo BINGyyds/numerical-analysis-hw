@@ -1,4 +1,4 @@
-\ProvidesPackage{homework_style}
+\ProvidesPackage{experiment_style}
 
 % =============================================
 % 常用宏包
@@ -10,6 +10,7 @@
 \RequirePackage{enumerate}                % 列表环境
 \RequirePackage{graphicx}                 % 插入图片
 \RequirePackage{bm}                       % 粗体数学符号
+\RequirePackage{listings}
 
 % =============================================
 % 页面与边距设置
@@ -22,8 +23,8 @@
 \pagestyle{fancy}
 \fancyhf{} % 清空默认设置
 \lhead{\textbf{数值分析}}  % 左侧页眉
-\chead{\textbf{第1章作业}}         % 中间页眉
-\rhead{\textbf{姓名：李融冰}}      % 右侧页眉
+\chead{\textbf{第1章数值实验}}         % 中间页眉
+\rhead{\textbf{3120250024 李融冰}}      % 右侧页眉
 \cfoot{\thepage}                     % 底部居中页码
 
 % 分界线粗细
@@ -47,6 +48,17 @@
 \newenvironment{myproof}
     {\noindent\textbf{证明：}}
     {\vspace{1.5em}} % 每道题做完后留出一定空白
+
+% 代码块全局美化配置：
+\lstset{
+    basicstyle=\ttfamily\small, % 使用等宽字体且字号偏小
+    breaklines=true,            % 自动换行
+    frame=single,               % 给代码加个边框
+    keywordstyle=\color{blue},  % 关键字蓝色
+    commentstyle=\color{green!50!black}, % 注释绿色
+    stringstyle=\color{orange}, % 字符串橙色
+    literate={π}{{$\pi$}}1      % 把代码里的原生 π 映射为 LaTeX 的数学 \pi 
+}
 
 % =============================================
 % 常用自定义快捷命令 (可根据习惯添加)
