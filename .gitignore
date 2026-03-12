@@ -27,3 +27,9 @@ Thumbs.db
 build/
 compile_commands.json
 *.cache
+
+# 忽略 Python 生成的文件（如果有 Python 脚本）
+__pycache__/
+
+# 忽略数据文件
+*.csv
