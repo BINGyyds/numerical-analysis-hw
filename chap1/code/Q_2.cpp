@@ -1,49 +1,45 @@
 #include <cmath>
-#include <iomanip> // 用于控制输出精度
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
 // 判断第 n 项的绝对值是否小于阈值
 bool is_term_less_than(int n, double threshold) {
-  // 因为我们需要的是绝对值，且 2n+1 恒为正，所以直接省略 (-1)^n
-  double term_abs = 1.0 / (2.0 * n + 1.0);
-  return term_abs < threshold;
+    double term_abs = 1.0 / (2.0 * n + 1.0);
+    return term_abs < threshold;
 }
 
 // 计算级数前 n 项的和
 double calculate_series(int n) {
-  double series_sum = 0.0;
-  double sign = 1.0; // 用于交替符号，比使用 pow(-1, i) 快得多
+    double series_sum = 0.0;
+    double sign = 1.0;
 
-  for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) {
 
-    series_sum += sign / (2.0 * i + 1.0);
+        series_sum += sign / (2.0 * i + 1.0);
 
-    sign = -sign; // 每次循环翻转符号
-  }
-  return series_sum;
+        sign = -sign; // 每次循环翻转符号
+    }
+    return series_sum;
 }
 
 int main() {
-  // 定义期望的截断误差列表
-  std::vector<double> expected_trunc_errs = {1e-4, 1e-5, 1e-6, 1e-8};
+    std::vector<double> expected_trunc_errs = {1e-4, 1e-5, 1e-6, 1e-8};
 
-  // 设置输出浮点数的精度，使其看起来更直观
-  std::cout << std::fixed << std::setprecision(10);
+    std::cout << std::fixed << std::setprecision(10);
 
-  for (double trunc_err : expected_trunc_errs) {
-    // 输出格式尽量还原 Python 中的 print(f'...')
-    std::cout << "期望截断误差为: " << trunc_err << "\n";
+    for (double trunc_err : expected_trunc_errs) {
+        std::cout << "期望截断误差为: " << trunc_err << "\n";
 
-    int n = 0;
-    while (!is_term_less_than(n, trunc_err)) {
-      n++;
+        int n = 0;
+        while (!is_term_less_than(n, trunc_err)) {
+            n++;
+        }
+
+        std::cout << "需要计算: " << n << " 项\n";
+        std::cout << "π的近似值为: " << 4.0 * calculate_series(n) << "\n";
+        std::cout << "-----------------------------------\n";
     }
 
-    std::cout << "需要计算: " << n << " 项\n";
-    std::cout << "π的近似值为: " << 4.0 * calculate_series(n) << "\n";
-    std::cout << "-----------------------------------\n";
-  }
-
-  return 0;
+    return 0;
 }
