@@ -1,0 +1,68 @@
+\ProvidesPackage{experiment_style}
+
+% =============================================
+% 常用宏包
+% =============================================
+\RequirePackage{amsmath, amssymb, amsthm} % 数学公式与符号
+\RequirePackage{geometry}                 % 页面边距设置
+\RequirePackage{fancyhdr}                 % 自定义页眉页脚
+\RequirePackage{xcolor}                   % 颜色支持
+\RequirePackage{enumerate}                % 列表环境
+\RequirePackage{graphicx}                 % 插入图片
+\RequirePackage{bm}                       % 粗体数学符号
+\RequirePackage{listings}
+
+% =============================================
+% 页面与边距设置
+% =============================================
+\geometry{a4paper, left=2.5cm, right=2.5cm, top=3cm, bottom=3cm, headheight=15pt}
+
+% =============================================
+% 页眉页脚设置 (Fancyhdr)
+% =============================================
+\pagestyle{fancy}
+\fancyhf{} % 清空默认设置
+\lhead{\textbf{数值分析}}  % 左侧页眉
+\chead{\textbf{第2章数值实验}}         % 中间页眉
+\rhead{\textbf{3120250024 李融冰}}      % 右侧页眉
+\cfoot{\thepage}                     % 底部居中页码
+
+% 分界线粗细
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% =============================================
+% 自定义环境 (题目与解答)
+% =============================================
+% 定义题目环境：自动加粗并带有间距
+\newenvironment{problem}[1]
+    {\vspace{1em}\noindent\textbf{#1}\par\vspace{0.5em}}
+    {}
+
+% 定义解答环境：带有明显的“解：”字样，并缩进
+\newenvironment{solution}
+    {\noindent\textbf{解：}}
+    {\vspace{1.5em}} % 每道题做完后留出一定空白
+
+% 定义证明环境：带有明显的“证明：”字样，并缩进
+\newenvironment{myproof}
+    {\noindent\textbf{证明：}}
+    {\vspace{1.5em}} % 每道题做完后留出一定空白
+
+% 代码块全局美化配置：
+\lstset{
+    basicstyle=\ttfamily\small, % 使用等宽字体且字号偏小
+    breaklines=true,            % 自动换行
+    frame=single,               % 给代码加个边框
+    keywordstyle=\color{blue},  % 关键字蓝色
+    commentstyle=\color{green!50!black}, % 注释绿色
+    stringstyle=\color{orange}, % 字符串橙色
+    literate={π}{{$\pi$}}1      % 把代码里的原生 π 映射为 LaTeX 的数学 \pi 
+}
+
+% =============================================
+% 常用自定义快捷命令 (可根据习惯添加)
+% =============================================
+\newcommand{\R}{\mathbb{R}} % 实数集简写 \R
+\newcommand{\E}{\mathbb{E}} % 期望简写 \E
+\newcommand{\dif}{\,\mathrm{d}} % 微分符号 d (直立且有小间距)

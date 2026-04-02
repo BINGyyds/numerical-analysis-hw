@@ -1,0 +1,323 @@
+\documentclass[11pt, a4paper]{ctexart}
+
+\usepackage{experiment_style}
+
+\begin{document}
+
+% =========================================
+% P61. 2
+% =========================================
+\begin{problem}{P61. 2}
+    试用 MATLAB 软件编程实现追赶法求解三对角方程组的算法，并考虑如下梯形电阻电路问题。
+
+    设电路中的各个电流 $\{i_1, i_2, \dots, i_8\}$ 满足线性方程组
+    \[
+        \begin{aligned}
+            2 i_1 - 2 i_2             &= V / R, \\
+            -2 i_1 + 5 i_2 - 2 i_3    &= 0, \\
+            -2 i_2 + 5 i_3 - 2 i_4    &= 0, \\
+            -2 i_3 + 5 i_4 - 2 i_5    &= 0, \\
+            -2 i_4 + 5 i_5 - 2 i_6    &= 0, \\
+            -2 i_5 + 5 i_6 - 2 i_7    &= 0, \\
+            -2 i_6 + 5 i_7 - 2 i_8    &= 0, \\
+            -2 i_7 + 5 i_8            &= 0.
+        \end{aligned}
+    \]
+    设 $V = 220\,\text{V}, R = 27\,\Omega$，求各段电路的电流量。
+\end{problem}
+
+\begin{solution}
+    \textbf{实验内容、步骤及结果}
+
+    先编写追赶法函数 \texttt{chap-2/thomas\_algorithm.m}：
+
+\begin{lstlisting}[language=Matlab]
+function x = thomas_algorithm(a, b, c, d)
+    % a: sub-diagonal (length n-1)
+    % b: main diagonal (length n)
+    % c: super-diagonal (length n-1)
+    % d: right-hand side (length n)
+    
+    n = length(b);
+    
+    % Forward elimination
+    for i = 2:n
+        w = a(i-1) / b(i-1);
+        b(i) = b(i) - w * c(i-1);
+        d(i) = d(i) - w * d(i-1);
+    end
+    
+    % Back substitution
+    x = zeros(n, 1);
+    x(n) = d(n) / b(n);
+    for i = n-1:-1:1
+        x(i) = (d(i) - c(i) * x(i+1)) / b(i);
+    end
+end
+\end{lstlisting}
+
+    然后建立本题对应的三对角方程组并调用追赶法程序 \texttt{chap-2/Q2.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define input parameters
+a = -2;
+a = repmat(a, 1, 7);
+b = [2, 5, 5, 5, 5, 5, 5, 5];
+c = a;
+V = 220;
+R = 27;
+d = [V/R, 0, 0, 0, 0, 0, 0, 0];
+
+% Call the function
+x = thomas_algorithm(a, b, c, d);
+
+% Display the output
+disp(x);
+\end{lstlisting}
+
+    \textbf{实验结果分析}
+
+\begin{lstlisting}
+>> Q2
+    8.1478
+    4.0737
+    2.0365
+    1.0175
+    0.5073
+    0.2506
+    0.1194
+    0.0477
+\end{lstlisting}
+
+    因此，各段电流近似为
+    \[
+        (i_1, i_2, \dots, i_8)^{\mathrm{T}}
+        \approx
+        (8.1478, 4.0737, 2.0365, 1.0175, 0.5073, 0.2506, 0.1194, 0.0477)^{\mathrm{T}}.
+    \]
+    可见电流沿梯形电阻电路逐段递减。
+\end{solution}
+
+
+% =========================================
+% P61. 3
+% =========================================
+\begin{problem}{P61. 3}
+    方程组的性态和矩阵条件数实验。设有线性方程组 $Ax = b$，其中系数矩阵
+    $A = (a_{ij})_{n \times n}$ 的元素分别为
+    \[
+        a_{ij} = x_i^{j-1}
+        \quad
+        \left(x_i = 1 + 0.1 i,\ i, j = 1, 2, \dots, n \right)
+    \]
+    或
+    \[
+        a_{ij} = \frac{1}{i + j - 1}
+        \quad
+        (i, j = 1, 2, \dots, n),
+    \]
+    右端向量
+    \[
+        \boldsymbol{b} =
+        \left(
+            \sum_{j=1}^n a_{1j},
+            \sum_{j=1}^n a_{2j},
+            \dots,
+            \sum_{j=1}^n a_{nj}
+        \right)^{\mathrm{T}}.
+    \]
+    利用 MATLAB 中的库函数完成下列实验：
+    \begin{enumerate}[1.]
+        \item 取 $n = 5, 10, 20$，分别求出系数矩阵的 2-条件数，判别它们是否为病态阵，并说明随着 $n$ 的增大矩阵性态如何变化。
+        \item 分别取 $n = 5, 10, 20$，解上述两个线性方程组 $Ax = b$。将求得的解与精确解 $x = (1, 1, \dots, 1)^{\mathrm{T}}$ 作比较，并说明实验现象。
+        \item 取 $n = 10$，对系数矩阵中的 $a_{22}$ 和 $a_{nn}$ 增加一个扰动 $10^{-8}$，求解方程组 $(A + \delta A)x = b$，观察解的变化。
+    \end{enumerate}
+\end{problem}
+
+\begin{solution}
+    \textbf{实验内容、步骤及结果}
+
+    为便于统一生成两类线性方程组，先编写辅助函数 \texttt{chap-2/generateLinearSystem.m}：
+
+\begin{lstlisting}[language=Matlab]
+function [A, b] = generateLinearSystem(n, matrixType)
+    % This function generates the coefficient matrix A and the vector b for
+    % the linear system Ax = b. The parameter n specifies the size of the
+    % matrix, and matrixType specifies the type of matrix to generate.
+    %
+    % matrixType can be:
+    % 'polynomial' - A is generated using a_{i j} = x_i^{j-1} where x_i = 1 + 0.1 * i
+    % 'hilbert'    - A is generated using a_{i j} = 1 / (i + j - 1)
+
+    if strcmp(matrixType, 'polynomial')
+        % Generate polynomial matrix
+        A = zeros(n);
+        for i = 1:n
+            x_i = 1 + 0.1 * i;
+            for j = 1:n
+                A(i, j) = x_i^(j-1);
+            end
+        end
+    elseif strcmp(matrixType, 'hilbert')
+        % Generate Hilbert matrix
+        A = zeros(n);
+        for i = 1:n
+            for j = 1:n
+                A(i, j) = 1 / (i + j - 1);
+            end
+        end
+    else
+        error('Invalid matrix type. Use ''polynomial'' or ''hilbert''.');
+    end
+
+    % Compute vector b
+    b = sum(A, 2);
+end
+\end{lstlisting}
+
+    \textbf{(1) 计算条件数}
+
+    条件数实验程序 \texttt{chap-2/Q31.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the values of n
+n_values = [5, 10, 20];
+matrixType = 'polynomial'; % or 'hilbert'
+
+% Loop through each value of n
+for n = n_values
+    % Generate the linear system
+    [A, b] = generateLinearSystem(n, matrixType);
+    
+    % Compute the 2-norm condition number
+    cond_num = cond(A, 2);
+    
+    % Determine if the matrix is ill-conditioned
+    if cond_num > 1e10 % Cond(A) >> 1
+        result = 'Ill-conditioned';
+    else
+        result = 'Well-conditioned';
+    end
+    
+    % Display the condition number and the result
+    fprintf('%s, n = %d, 2-norm condition number = %.2e, Result: %s\n', matrixType, n, cond_num, result);
+end
+\end{lstlisting}
+
+    运行结果如下：
+
+\begin{lstlisting}
+>> Q31
+polynomial, n = 5, 2-norm condition number = 5.36e+05, Result: Well-conditioned
+polynomial, n = 10, 2-norm condition number = 8.68e+11, Result: Ill-conditioned
+polynomial, n = 20, 2-norm condition number = 6.07e+21, Result: Ill-conditioned
+>> Q31
+hilbert, n = 5, 2-norm condition number = 4.77e+05, Result: Well-conditioned
+hilbert, n = 10, 2-norm condition number = 1.60e+13, Result: Ill-conditioned
+hilbert, n = 20, 2-norm condition number = 2.11e+18, Result: Ill-conditioned
+\end{lstlisting}
+
+    由结果可见，随着 $n$ 增大，两类矩阵的 2-条件数迅速增大，矩阵病态程度显著增强。
+
+    \textbf{(2) 比较数值解与精确解}
+
+    求解线性方程组并计算相对误差的程序 \texttt{chap-2/Q32.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the values of n
+n_values = [5, 10, 20];
+matrixTypes = {'polynomial', 'hilbert'};
+
+% Exact solution
+x_exact = @(n) ones(n, 1);
+
+% Loop through each matrix type and value of n
+for matrixType = matrixTypes
+    for n = n_values
+        % Generate the linear system
+        [A, b] = generateLinearSystem(n, matrixType{1});
+        
+        % Solve the linear system
+        x_approx = A \ b;
+        
+        % Compute the relative error using the infinity norm
+        rel_error = norm(x_approx - x_exact(n), inf) / norm(x_exact(n), inf);
+        
+        % Display the relative error
+        fprintf('%s, n = %d, Relative Error (inf-norm) = %.2e\n', matrixType{1}, n, rel_error);
+    end
+end
+\end{lstlisting}
+
+    运行结果如下：
+
+\begin{lstlisting}
+>> Q32
+polynomial, n = 5, Relative Error (inf-norm) = 2.89e-11
+polynomial, n = 10, Relative Error (inf-norm) = 7.21e-05
+polynomial, n = 20, Relative Error (inf-norm) = 3.50e+05
+hilbert, n = 5, Relative Error (inf-norm) = 6.17e-13
+hilbert, n = 10, Relative Error (inf-norm) = 3.18e-04
+hilbert, n = 20, Relative Error (inf-norm) = 2.64e+01
+
+Warning: Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =  3.713214e-23.
+> In Q32 (line 15): x_approx = A \ b;
+Warning: Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =  1.276108e-19.
+> In Q32 (line 15): x_approx = A \ b;
+\end{lstlisting}
+
+    随着 $n$ 增大，系数矩阵的病态程度进一步提升，造成解的相对误差明显增大；当矩阵高度病态时，即使理论精确解为全 $1$ 向量，数值计算结果也会出现严重偏离。
+
+    \textbf{(3) 考察微小扰动对解的影响}
+
+    扰动实验程序 \texttt{chap-2/Q33.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the value of n
+n = 10;
+matrixType = 'polynomial'; % or 'hilbert'
+
+% Generate the original linear system
+[A, b] = generateLinearSystem(n, matrixType);
+
+% Exact solution
+x_exact = @(n) ones(n, 1);
+
+% Solve the original system
+x_original = A \ b;
+
+% Introduce perturbation
+A_perturbed = A;
+A_perturbed(2, 2) = A_perturbed(2, 2) + 1e-8;
+A_perturbed(n, n) = A_perturbed(n, n) + 1e-8;
+
+% Solve the perturbed system
+x_perturbed = A_perturbed \ b;
+
+% Compute relative errors
+relative_error_exact = norm(x_original - x_exact(n), inf) / norm(x_exact(n), inf);
+relative_error_perturbed = norm(x_perturbed - x_exact(n), inf) / norm(x_exact(n), inf);
+
+% Display the results
+fprintf('%s\n', matrixType);
+fprintf('Relative error of the original solution: %.2e\n', relative_error_exact);
+fprintf('Relative error of the perturbed solution: %.2e\n', relative_error_perturbed);
+\end{lstlisting}
+
+    分别取 \texttt{matrixType = 'polynomial'} 和 \texttt{matrixType = 'hilbert'} 运行，结果如下：
+
+\begin{lstlisting}
+>> Q33
+polynomial
+Relative error of the original solution: 7.21e-05
+Relative error of the perturbed solution: 3.16e-01
+>> Q33
+hilbert
+Relative error of the original solution: 3.18e-04
+Relative error of the perturbed solution: 9.77e+00
+\end{lstlisting}
+
+    当 $n = 10$ 时，\texttt{polynomial} 和 \texttt{hilbert} 两类线性系统都已表现出明显病态性。此时即使只在矩阵中引入 $10^{-8}$ 量级的微小扰动，也会使解的相对误差显著放大，说明病态方程组对数据误差极其敏感。
+\end{solution}
+
+\end{document}
