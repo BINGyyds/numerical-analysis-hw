@@ -1,0 +1,52 @@
+\ProvidesPackage{assignment_style}
+
+% =============================================
+% 常用宏包
+% =============================================
+\RequirePackage{amsmath, amssymb, amsthm}
+\RequirePackage{geometry}
+\RequirePackage{fancyhdr}
+\RequirePackage{xcolor}
+\RequirePackage{enumerate}
+\RequirePackage{graphicx}
+\RequirePackage{bm}
+
+% =============================================
+% 页面与边距设置
+% =============================================
+\geometry{a4paper, left=2.5cm, right=2.5cm, top=3cm, bottom=3cm, headheight=15pt}
+
+% =============================================
+% 页眉页脚设置
+% =============================================
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{数值分析}}
+\chead{\textbf{第3章数值作业}}
+\rhead{\textbf{3120250024 李融冰}}
+\cfoot{\thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% =============================================
+% 自定义环境
+% =============================================
+\newenvironment{problem}[1]
+    {\vspace{1em}\noindent\textbf{#1}\par\vspace{0.5em}}
+    {}
+
+\newenvironment{solution}
+    {\noindent\textbf{解：}}
+    {\vspace{1.5em}}
+
+\newenvironment{myproof}
+    {\noindent\textbf{证明：}}
+    {\vspace{1.5em}}
+
+% =============================================
+% 常用快捷命令
+% =============================================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\dif}{\,\mathrm{d}}

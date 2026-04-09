@@ -1,0 +1,690 @@
+\documentclass[11pt, a4paper]{ctexart}
+
+\usepackage{assignment_style}
+
+\begin{document}
+
+% =========================================
+% P87. 2
+% =========================================
+\begin{problem}{P87. 2 用 Jacobi 迭代、Gauss-Seidel 迭代与 SOR 迭代（$\omega = 1.46$）求解方程组，取初值 $x^{(0)} = (1, 1, 1, 1)^{\mathrm{T}}$，精确到 $10^{-3}$。}
+    \[
+        \begin{pmatrix}
+            2 & -1 & 0 & 0 \\
+            -1 & 2 & -1 & 0 \\
+            0 & -1 & 2 & -1 \\
+            0 & 0 & -1 & 2
+        \end{pmatrix}
+        x
+        =
+        \begin{pmatrix}
+            1 \\
+            0 \\
+            1 \\
+            0
+        \end{pmatrix}.
+    \]
+\end{problem}
+
+\begin{solution}
+    原方程组等价于
+    \[
+        \begin{cases}
+            x_1 = \dfrac{1 + x_2}{2}, \\
+            x_2 = \dfrac{x_1 + x_3}{2}, \\
+            x_3 = \dfrac{1 + x_2 + x_4}{2}, \\
+            x_4 = \dfrac{x_3}{2}.
+        \end{cases}
+    \]
+    继续求解可得精确解
+    \[
+        x =
+        \begin{pmatrix}
+            \dfrac{6}{5} \\
+            \dfrac{7}{5} \\
+            \dfrac{8}{5} \\
+            \dfrac{4}{5}
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            1.2 \\
+            1.4 \\
+            1.6 \\
+            0.8
+        \end{pmatrix}.
+    \]
+
+    \textbf{(1) Jacobi 迭代}
+
+    迭代格式为
+    \[
+        x^{(k+1)}
+        =
+        \begin{pmatrix}
+            \dfrac{1 + x_2^{(k)}}{2} \\
+            \dfrac{x_1^{(k)} + x_3^{(k)}}{2} \\
+            \dfrac{1 + x_2^{(k)} + x_4^{(k)}}{2} \\
+            \dfrac{x_3^{(k)}}{2}
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            \dfrac{1}{2} \\
+            0 \\
+            \dfrac{1}{2} \\
+            0
+        \end{pmatrix}
+        +
+        \begin{pmatrix}
+            0 & \dfrac{1}{2} & 0 & 0 \\
+            \dfrac{1}{2} & 0 & \dfrac{1}{2} & 0 \\
+            0 & \dfrac{1}{2} & 0 & \dfrac{1}{2} \\
+            0 & 0 & \dfrac{1}{2} & 0
+        \end{pmatrix}
+        x^{(k)}.
+    \]
+
+    由 $x^{(0)} = (1,1,1,1)^{\mathrm{T}}$ 出发，得到部分迭代结果：
+    \[
+        \renewcommand{\arraystretch}{1.15}
+        \begin{array}{c|cccc}
+            k & x_1^{(k)} & x_2^{(k)} & x_3^{(k)} & x_4^{(k)} \\ \hline
+            0  & 1      & 1      & 1      & 1 \\
+            1  & 1      & 1      & 1.5    & 0.5 \\
+            2  & 1      & 1.25   & 1.25   & 0.75 \\
+            3  & 1.125  & 1.125  & 1.5    & 0.625 \\
+            \cdots & \cdots & \cdots & \cdots & \cdots \\
+            29 & 1.1997 & 1.3989 & 1.5996 & 0.7993
+        \end{array}
+    \]
+    当 $k = 29$ 时已达到 $10^{-3}$ 的精度要求。
+
+    \textbf{(2) Gauss-Seidel 迭代}
+
+    迭代格式为
+    \[
+        \begin{cases}
+            x_1^{(k+1)} = \dfrac{1 + x_2^{(k)}}{2}, \\
+            x_2^{(k+1)} = \dfrac{x_1^{(k+1)} + x_3^{(k)}}{2}, \\
+            x_3^{(k+1)} = \dfrac{1 + x_2^{(k+1)} + x_4^{(k)}}{2}, \\
+            x_4^{(k+1)} = \dfrac{x_3^{(k+1)}}{2}.
+        \end{cases}
+    \]
+
+    部分迭代结果为
+    \[
+        \renewcommand{\arraystretch}{1.15}
+        \begin{array}{c|cccc}
+            k & x_1^{(k)} & x_2^{(k)} & x_3^{(k)} & x_4^{(k)} \\ \hline
+            0  & 1      & 1      & 1      & 1 \\
+            1  & 1      & 1      & 1.5    & 0.75 \\
+            2  & 1      & 1.25   & 1.5    & 0.75 \\
+            3  & 1.125  & 1.3125 & 1.5312 & 0.7656 \\
+            \cdots & \cdots & \cdots & \cdots & \cdots \\
+            12 & 1.1986 & 1.3981 & 1.5985 & 0.7992
+        \end{array}
+    \]
+    当 $k = 12$ 时已达到 $10^{-3}$ 的精度要求。
+
+    \textbf{(3) SOR 迭代}
+
+    当 $\omega = 1.46$ 时，SOR 迭代格式为
+    \[
+        \begin{cases}
+            x_1^{(k+1)}
+            = \omega \dfrac{1 + x_2^{(k)}}{2} + (1 - \omega)x_1^{(k)}, \\
+            x_2^{(k+1)}
+            = \omega \dfrac{x_1^{(k+1)} + x_3^{(k)}}{2} + (1 - \omega)x_2^{(k)}, \\
+            x_3^{(k+1)}
+            = \omega \dfrac{1 + x_2^{(k+1)} + x_4^{(k)}}{2} + (1 - \omega)x_3^{(k)}, \\
+            x_4^{(k+1)}
+            = \omega \dfrac{x_3^{(k+1)}}{2} + (1 - \omega)x_4^{(k)}.
+        \end{cases}
+    \]
+
+    部分迭代结果为
+    \[
+        \renewcommand{\arraystretch}{1.15}
+        \begin{array}{c|cccc}
+            k & x_1^{(k)} & x_2^{(k)} & x_3^{(k)} & x_4^{(k)} \\ \hline
+            0  & 1      & 1      & 1      & 1 \\
+            1  & 1      & 1      & 1.73   & 0.8029 \\
+            2  & 1      & 1.5329 & 1.6393 & 0.8274 \\
+            3  & 1.3890 & 1.5056 & 1.6790 & 0.8450 \\
+            \cdots & \cdots & \cdots & \cdots & \cdots \\
+            10 & 1.2003 & 1.4004 & 1.5999 & 0.8000
+        \end{array}
+    \]
+    当 $k = 10$ 时已达到 $10^{-3}$ 的精度要求。三种方法中，SOR 收敛最快。
+\end{solution}
+
+
+% =========================================
+% 5
+% =========================================
+\begin{problem}{5. 若用 Jacobi 迭代法求解方程组}
+    \[
+        \begin{pmatrix}
+            a & -1 & -3 \\
+            -1 & a & -2 \\
+            3 & -2 & a
+        \end{pmatrix}
+        x = b,
+    \]
+    讨论参数 $a$ 与收敛性的关系。
+\end{problem}
+
+\begin{solution}
+    Jacobi 迭代要求对角元非零，故先设 $a \ne 0$。取
+    \[
+        D = \operatorname{diag}(a,a,a),
+    \]
+    则 Jacobi 迭代矩阵为
+    \[
+        M = I - D^{-1}A
+        =
+        \begin{pmatrix}
+            0 & \dfrac{1}{a} & \dfrac{3}{a} \\
+            \dfrac{1}{a} & 0 & \dfrac{2}{a} \\
+            -\dfrac{3}{a} & \dfrac{2}{a} & 0
+        \end{pmatrix}.
+    \]
+    由特征方程
+    \[
+        \det(\lambda I - M) = 0
+    \]
+    可得
+    \[
+        \lambda^3 + \frac{4}{a^2}\lambda = 0,
+    \]
+    因而三个特征值为
+    \[
+        \lambda_1 = 0,\qquad
+        \lambda_{2,3} = \pm \frac{2}{a} i.
+    \]
+    所以谱半径为
+    \[
+        \rho(M) = \max |\lambda| = \left|\frac{2}{a}\right|.
+    \]
+    Jacobi 迭代收敛的充要条件是 $\rho(M) < 1$，故
+    \[
+        \left|\frac{2}{a}\right| < 1
+        \iff |a| > 2.
+    \]
+    综上：
+    \[
+        \boxed{\text{当 } a > 2 \text{ 或 } a < -2 \text{ 时，Jacobi 迭代收敛；当 } |a| \le 2 \text{ 时发散。}}
+    \]
+\end{solution}
+
+
+% =========================================
+% 6
+% =========================================
+\begin{problem}{6. 证明：用 Jacobi 迭代法求解二元线性方程组}
+    \[
+        \begin{pmatrix}
+            a_{11} & a_{12} \\
+            a_{21} & a_{22}
+        \end{pmatrix}
+        x = b
+    \]
+    收敛的充要条件为
+    \[
+        \left| \frac{a_{12}a_{21}}{a_{11}a_{22}} \right| < 1.
+    \]
+\end{problem}
+
+\begin{myproof}
+    设
+    \[
+        A =
+        \begin{pmatrix}
+            a_{11} & a_{12} \\
+            a_{21} & a_{22}
+        \end{pmatrix},
+        \qquad
+        D =
+        \begin{pmatrix}
+            a_{11} & 0 \\
+            0 & a_{22}
+        \end{pmatrix}.
+    \]
+    Jacobi 迭代矩阵为
+    \[
+        M = I - D^{-1}A
+        =
+        \begin{pmatrix}
+            0 & -\dfrac{a_{12}}{a_{11}} \\
+            -\dfrac{a_{21}}{a_{22}} & 0
+        \end{pmatrix}.
+    \]
+    由特征方程
+    \[
+        \det(\lambda I - M)
+        =
+        \det
+        \begin{pmatrix}
+            \lambda & \dfrac{a_{12}}{a_{11}} \\
+            \dfrac{a_{21}}{a_{22}} & \lambda
+        \end{pmatrix}
+        = \lambda^2 - \frac{a_{12}a_{21}}{a_{11}a_{22}}
+        = 0
+    \]
+    得
+    \[
+        \lambda_{1,2}
+        = \pm \sqrt{\frac{a_{12}a_{21}}{a_{11}a_{22}}}.
+    \]
+    因此
+    \[
+        \rho(M)
+        = \max |\lambda|
+        = \sqrt{\left| \frac{a_{12}a_{21}}{a_{11}a_{22}} \right|}.
+    \]
+    Jacobi 迭代收敛的充要条件是 $\rho(M) < 1$，故
+    \[
+        \sqrt{\left| \frac{a_{12}a_{21}}{a_{11}a_{22}} \right|} < 1
+        \iff
+        \left| \frac{a_{12}a_{21}}{a_{11}a_{22}} \right| < 1.
+    \]
+    结论得证。
+\end{myproof}
+
+
+% =========================================
+% 7
+% =========================================
+\begin{problem}{7. 设线性方程组}
+    \[
+        \begin{pmatrix}
+            10 & 4 & 4 \\
+            4 & 10 & 8 \\
+            4 & 8 & 10
+        \end{pmatrix}
+        x
+        =
+        \begin{pmatrix}
+            13 \\
+            11 \\
+            25
+        \end{pmatrix}.
+    \]
+    \begin{enumerate}[1.]
+        \item 写出 Jacobi 迭代、Gauss-Seidel 迭代与 SOR 迭代（$\omega = 1.35$）的计算公式和迭代矩阵；
+        \item 判断三种迭代方法的收敛性。
+    \end{enumerate}
+\end{problem}
+
+\begin{solution}
+    设
+    \[
+        A =
+        \begin{pmatrix}
+            10 & 4 & 4 \\
+            4 & 10 & 8 \\
+            4 & 8 & 10
+        \end{pmatrix},
+        \qquad
+        b =
+        \begin{pmatrix}
+            13 \\
+            11 \\
+            25
+        \end{pmatrix}.
+    \]
+
+    \textbf{(1) Jacobi 迭代}
+
+    计算公式为
+    \[
+        \begin{cases}
+            x_1^{(k+1)} = \dfrac{13 - 4x_2^{(k)} - 4x_3^{(k)}}{10}, \\
+            x_2^{(k+1)} = \dfrac{11 - 4x_1^{(k)} - 8x_3^{(k)}}{10}, \\
+            x_3^{(k+1)} = \dfrac{25 - 4x_1^{(k)} - 8x_2^{(k)}}{10}.
+        \end{cases}
+    \]
+    写成矩阵形式
+    \[
+        x^{(k+1)} = M_1 x^{(k)} + g_1,
+    \]
+    其中
+    \[
+        M_1
+        =
+        \begin{pmatrix}
+            0 & -\dfrac{2}{5} & -\dfrac{2}{5} \\
+            -\dfrac{2}{5} & 0 & -\dfrac{4}{5} \\
+            -\dfrac{2}{5} & -\dfrac{4}{5} & 0
+        \end{pmatrix},
+        \qquad
+        g_1
+        =
+        \begin{pmatrix}
+            \dfrac{13}{10} \\
+            \dfrac{11}{10} \\
+            \dfrac{5}{2}
+        \end{pmatrix}.
+    \]
+
+    \textbf{(2) Gauss-Seidel 迭代}
+
+    计算公式为
+    \[
+        \begin{cases}
+            x_1^{(k+1)} = \dfrac{13 - 4x_2^{(k)} - 4x_3^{(k)}}{10}, \\
+            x_2^{(k+1)} = \dfrac{11 - 4x_1^{(k+1)} - 8x_3^{(k)}}{10}, \\
+            x_3^{(k+1)} = \dfrac{25 - 4x_1^{(k+1)} - 8x_2^{(k+1)}}{10}.
+        \end{cases}
+    \]
+    记 $A = D + L + U$，则
+    \[
+        x^{(k+1)} = M_2 x^{(k)} + g_2,
+        \qquad
+        M_2 = -(D+L)^{-1}U,
+        \qquad
+        g_2 = (D+L)^{-1}b.
+    \]
+    计算得
+    \[
+        M_2
+        =
+        \begin{pmatrix}
+            0 & -\dfrac{2}{5} & -\dfrac{2}{5} \\
+            0 & \dfrac{4}{25} & -\dfrac{16}{25} \\
+            0 & \dfrac{4}{125} & \dfrac{84}{125}
+        \end{pmatrix},
+        \qquad
+        g_2
+        =
+        \begin{pmatrix}
+            \dfrac{13}{10} \\
+            \dfrac{29}{50} \\
+            \dfrac{379}{250}
+        \end{pmatrix}.
+    \]
+
+    \textbf{(3) SOR 迭代（$\omega = 1.35$）}
+
+    计算公式为
+    \[
+        \begin{cases}
+            x_1^{(k+1)}
+            =
+            \dfrac{\omega(13 - 4x_2^{(k)} - 4x_3^{(k)})}{10}
+            + (1-\omega)x_1^{(k)}, \\
+            x_2^{(k+1)}
+            =
+            \dfrac{\omega(11 - 4x_1^{(k+1)} - 8x_3^{(k)})}{10}
+            + (1-\omega)x_2^{(k)}, \\
+            x_3^{(k+1)}
+            =
+            \dfrac{\omega(25 - 4x_1^{(k+1)} - 8x_2^{(k+1)})}{10}
+            + (1-\omega)x_3^{(k)}.
+        \end{cases}
+    \]
+    其迭代矩阵可写成
+    \[
+        x^{(k+1)} = M_3 x^{(k)} + g_3,
+        \qquad
+        M_3 = (D+\omega L)^{-1}\bigl[(1-\omega)D-\omega U\bigr],
+        \qquad
+        g_3 = \omega (D+\omega L)^{-1}b.
+    \]
+    代入 $\omega = 1.35$，可得
+    \[
+        M_3
+        \approx
+        \begin{pmatrix}
+            -0.35 & -0.54 & -0.54 \\
+            0.189 & -0.0584 & -0.7884 \\
+            -0.01512 & 0.354672 & 0.793072
+        \end{pmatrix},
+        \qquad
+        g_3
+        \approx
+        \begin{pmatrix}
+            1.755 \\
+            0.5373 \\
+            1.847016
+        \end{pmatrix}.
+    \]
+
+    \textbf{(4) 收敛性判断}
+
+    计算三个迭代矩阵的谱半径，得到
+    \[
+        \rho(M_1) \approx 1.0928,\qquad
+        \rho(M_2) \approx 0.6283,\qquad
+        \rho(M_3) \approx 0.4463.
+    \]
+    因而
+    \[
+        \boxed{\text{Jacobi 迭代发散，而 Gauss-Seidel 迭代和 SOR 迭代都收敛。}}
+    \]
+    且在这里 SOR 迭代的谱半径最小，因此收敛速度最快。
+\end{solution}
+
+
+% =========================================
+% 9
+% =========================================
+\begin{problem}{9. 设线性方程组}
+    \[
+        \begin{pmatrix}
+            1 & a & a \\
+            4a & 1 & 0 \\
+            a & 0 & 1
+        \end{pmatrix}
+        x
+        =
+        \begin{pmatrix}
+            b_1 \\
+            b_2 \\
+            b_3
+        \end{pmatrix}.
+    \]
+    \begin{enumerate}[1.]
+        \item 写出 Jacobi 迭代和 Gauss-Seidel 迭代的计算公式；
+        \item 用迭代收敛的充要条件给出使这两种迭代都收敛的 $a$ 的取值范围。
+    \end{enumerate}
+\end{problem}
+
+\begin{solution}
+    \textbf{(1) 迭代公式}
+
+    Jacobi 迭代为
+    \[
+        \begin{cases}
+            x_1^{(k+1)} = b_1 - a x_2^{(k)} - a x_3^{(k)}, \\
+            x_2^{(k+1)} = b_2 - 4a x_1^{(k)}, \\
+            x_3^{(k+1)} = b_3 - a x_1^{(k)}.
+        \end{cases}
+    \]
+
+    Gauss-Seidel 迭代为
+    \[
+        \begin{cases}
+            x_1^{(k+1)} = b_1 - a x_2^{(k)} - a x_3^{(k)}, \\
+            x_2^{(k+1)} = b_2 - 4a x_1^{(k+1)}, \\
+            x_3^{(k+1)} = b_3 - a x_1^{(k+1)}.
+        \end{cases}
+    \]
+
+    \textbf{(2) 收敛区间}
+
+    对 Jacobi 迭代，有 $D = I$，故
+    \[
+        M_J = I - D^{-1}A = I - A
+        =
+        \begin{pmatrix}
+            0 & -a & -a \\
+            -4a & 0 & 0 \\
+            -a & 0 & 0
+        \end{pmatrix}.
+    \]
+    特征方程为
+    \[
+        \det(\lambda I - M_J)
+        =
+        \det
+        \begin{pmatrix}
+            \lambda & a & a \\
+            4a & \lambda & 0 \\
+            a & 0 & \lambda
+        \end{pmatrix}
+        =
+        \lambda^3 - 5a^2 \lambda
+        = 0.
+    \]
+    因而
+    \[
+        \lambda_1 = 0,\qquad
+        \lambda_{2,3} = \pm \sqrt{5}\,a,
+    \]
+    所以
+    \[
+        \rho(M_J) = \sqrt{5}\,|a|.
+    \]
+    Jacobi 收敛当且仅当
+    \[
+        \sqrt{5}\,|a| < 1
+        \iff
+        |a| < \frac{1}{\sqrt{5}}
+        = \frac{\sqrt{5}}{5}.
+    \]
+
+    对 Gauss-Seidel 迭代，取
+    \[
+        L =
+        \begin{pmatrix}
+            0 & 0 & 0 \\
+            4a & 0 & 0 \\
+            a & 0 & 0
+        \end{pmatrix},
+        \qquad
+        U =
+        \begin{pmatrix}
+            0 & a & a \\
+            0 & 0 & 0 \\
+            0 & 0 & 0
+        \end{pmatrix},
+    \]
+    则
+    \[
+        M_G = -(D+L)^{-1}U
+        =
+        \begin{pmatrix}
+            0 & -a & -a \\
+            0 & 4a^2 & 4a^2 \\
+            0 & a^2 & a^2
+        \end{pmatrix}.
+    \]
+    其特征值为
+    \[
+        0,\ 0,\ 5a^2,
+    \]
+    因而
+    \[
+        \rho(M_G) = 5a^2.
+    \]
+    Gauss-Seidel 收敛当且仅当
+    \[
+        5a^2 < 1
+        \iff
+        |a| < \frac{\sqrt{5}}{5}.
+    \]
+
+    故使两种方法都收敛的参数范围为
+    \[
+        \boxed{-\frac{\sqrt{5}}{5} < a < \frac{\sqrt{5}}{5}.}
+    \]
+\end{solution}
+
+
+% =========================================
+% 12
+% =========================================
+\begin{problem}{12. 证明：对称矩阵}
+    \[
+        A =
+        \begin{pmatrix}
+            1 & a & a \\
+            a & 1 & a \\
+            a & a & 1
+        \end{pmatrix}
+    \]
+    当 $-\dfrac{1}{2} < a < 1$ 时正定，但只有当 $-\dfrac{1}{2} < a < \dfrac{1}{2}$ 时，Jacobi 迭代求解 $Ax=b$ 才收敛。
+\end{problem}
+
+\begin{myproof}
+    \textbf{(1) 判定正定性}
+
+    由 Sylvester 判据，只需考察顺序主子式：
+    \[
+        \Delta_1 = 1 > 0,
+    \]
+    \[
+        \Delta_2 =
+        \begin{vmatrix}
+            1 & a \\
+            a & 1
+        \end{vmatrix}
+        = 1 - a^2 > 0
+        \iff -1 < a < 1,
+    \]
+    \[
+        \Delta_3 =
+        \begin{vmatrix}
+            1 & a & a \\
+            a & 1 & a \\
+            a & a & 1
+        \end{vmatrix}
+        = (1-a)^2(1+2a) > 0
+        \iff -\frac{1}{2} < a < 1.
+    \]
+    综合可得
+    \[
+        \boxed{A \text{ 在 } -\frac{1}{2} < a < 1 \text{ 时正定。}}
+    \]
+
+    \textbf{(2) Jacobi 迭代的收敛性}
+
+    由于 $D = I$，Jacobi 迭代矩阵为
+    \[
+        M = I - D^{-1}A = I - A
+        =
+        \begin{pmatrix}
+            0 & -a & -a \\
+            -a & 0 & -a \\
+            -a & -a & 0
+        \end{pmatrix}.
+    \]
+    该矩阵的特征值为
+    \[
+        -2a,\quad a,\quad a.
+    \]
+    因而谱半径为
+    \[
+        \rho(M) = \max\{2|a|, |a|\} = 2|a|.
+    \]
+    Jacobi 迭代收敛的充要条件是
+    \[
+        \rho(M) < 1
+        \iff
+        2|a| < 1
+        \iff
+        |a| < \frac{1}{2}.
+    \]
+    即
+    \[
+        \boxed{-\frac{1}{2} < a < \frac{1}{2}.}
+    \]
+
+    因此，虽然矩阵在区间 $-\dfrac{1}{2} < a < 1$ 上正定，但 Jacobi 迭代只有在更小的区间
+    \[
+        -\frac{1}{2} < a < \frac{1}{2}
+    \]
+    内才收敛。
+\end{myproof}
+
+\end{document}
