@@ -1,0 +1,480 @@
+\documentclass[11pt, a4paper]{ctexart}
+
+\usepackage{experiment_style}
+
+\begin{document}
+
+% =========================================
+% P121. 1
+% =========================================
+\begin{problem}{P121. 1}
+    设
+    \[
+        A =
+        \begin{pmatrix}
+            6 & -4 & 18 \\
+            20 & -6 & -6 \\
+            22 & -22 & 11
+        \end{pmatrix},
+        \qquad
+        \boldsymbol{x}^{(0)}=(1,1,1)^{\mathrm{T}},
+    \]
+    求 $A$ 的按模最大的特征值和特征向量，要求误差小于 $10^{-6}$。
+    \begin{enumerate}[1.]
+        \item 直接用幂法计算，观察出现的现象并说明原因；
+        \item 用归一化的幂法计算。
+    \end{enumerate}
+\end{problem}
+
+\begin{solution}
+    \textbf{实验内容、步骤及结果}
+
+    幂法函数 \texttt{chap-4/pm.m}：
+
+\begin{lstlisting}[language=Matlab]
+function [x_values, lambda_values, iter] = pm(A, x0, max_iter, tol, lambda0, normalize)
+    % Power Method for finding the dominant eigenvalue and eigenvector.
+
+    if nargin < 3
+        max_iter = inf;
+    end
+
+    if nargin < 4
+        tol = 0;
+    end
+
+    if nargin < 5
+        lambda0 = 0;
+    end
+
+    if nargin < 6
+        normalize = true;
+    end
+
+    x = x0;
+    lambda = lambda0;
+    iter = 0;
+
+    A = A - lambda0 * eye(size(A));
+
+    x_values = x0;
+    lambda_values = lambda0;
+
+    while iter < max_iter
+        iter = iter + 1;
+        if normalize
+            [~, idx] = max(abs(x));
+            x = x / x(idx);
+        end
+        x = A * x;
+
+        if normalize
+            [~, idx] = max(abs(x));
+            lambda_new = x(idx);
+        else
+            lambda_new = x' * A * x / (x' * x);
+        end
+
+        x_values(:, iter + 1) = x / lambda_new;
+        lambda_values(iter + 1) = lambda_new + lambda0;
+
+        if tol > 0
+            if abs(lambda_new - lambda) < tol
+                return;
+            end
+        end
+
+        lambda = lambda_new;
+    end
+
+    if tol > 0
+        warning('Power method did not converge within the maximum number of iterations');
+    end
+end
+\end{lstlisting}
+
+    主程序 \texttt{chap-4/P121\_Q1.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the input matrix A and initial guess x0
+A = [6, -4, 18; 20, -6, -6; 22, -22, 11];
+x0 = [1; 1; 1];
+max_iter = 1e3;
+tol = 1e-6;
+
+for normalize = [false, true]
+    disp('Normalize:');
+    disp(normalize);
+
+    % Call the power method function
+    [x_values, lambda_values, iter] = pm(A, x0, max_iter, tol, 0, normalize);
+
+    disp('Number of iterations performed:');
+    disp(iter);
+
+    disp('x_values from 100 to 110:');
+    disp(x_values(:, 100:110));
+
+    disp('lambda_values from 100 to 110:');
+    disp(lambda_values(100:110));
+
+    disp('Latest lambda_value:');
+    disp(lambda_values(end));
+
+    disp('----------------------------------------');
+end
+
+disp('Eigenvalues of A calculated using MATLAB built-in function:');
+disp(eig(A));
+\end{lstlisting}
+
+    \textbf{实验结果分析}
+
+\begin{lstlisting}
+>> P121_Q1
+Normalize:
+   0
+
+Warning: Power method did not converge within the maximum number of iterations
+> In pm (line 76)
+In P121_Q1 (line 12)
+
+Number of iterations performed:
+        1000
+
+lambda_values from 100 to 110:
+   24.0000   13.8947   24.0000   13.8947   24.0000   13.8947   24.0000   13.8947   24.0000   13.8947   24.0000
+
+Latest lambda_value:
+   NaN
+
+----------------------------------------
+Normalize:
+   1
+
+Warning: Power method did not converge within the maximum number of iterations
+> In pm (line 76)
+In P121_Q1 (line 12)
+
+Number of iterations performed:
+        1000
+
+x_values from 100 to 110:
+    1.0000    0.6250    1.0000    0.6250    1.0000    0.6250    1.0000    0.6250    1.0000    0.6250    1.0000
+    0.1429    0.6250    0.1429    0.6250    0.1429    0.6250    0.1429    0.6250    0.1429    0.6250    0.1429
+    0.5714    1.0000    0.5714    1.0000    0.5714    1.0000    0.5714    1.0000    0.5714    1.0000    0.5714
+
+lambda_values from 100 to 110:
+   19.2500   25.1429   19.2500   25.1429   19.2500   25.1429   19.2500   25.1429   19.2500   25.1429   19.2500
+
+Latest lambda_value:
+   25.1429
+
+----------------------------------------
+Eigenvalues of A calculated using MATLAB built-in function:
+  -22.0000
+   22.0000
+   11.0000
+\end{lstlisting}
+
+    直接使用幂法时，迭代向量会随着主导特征值的幂次放大。由于本题矩阵存在按模相等且符号相反的主导特征值 $-22$ 与 $22$，未归一化迭代不仅会发生数值溢出，还会导致特征值估计振荡，最终出现 \texttt{NaN}。
+
+    归一化幂法通过每一步对向量进行缩放避免了溢出，但由于存在两个按模相等的主导特征值，迭代向量和特征值估计仍在两组数值之间交替振荡。因此，本题不能用普通幂法稳定收敛到唯一的主特征向量。可通过位移变换 $A' = A + \mu I$ 打破正负对称主导特征值造成的振荡。
+\end{solution}
+
+
+% =========================================
+% P121. 2
+% =========================================
+\begin{problem}{P121. 2}
+    设
+    \[
+        A =
+        \begin{pmatrix}
+            12 & 6 & -6 \\
+            6 & 16 & 2 \\
+            -6 & 2 & 16
+        \end{pmatrix},
+        \qquad
+        x^{(0)}=(1,1,1)^{\mathrm{T}}.
+    \]
+    先用幂法迭代 3 次，得到 $A$ 的按模最大特征值的近似值，取 $\lambda^\ast$ 为其整数部分，再用反幂法计算 $A$ 的按模最大特征值的更精确近似值，要求误差小于 $10^{-10}$。
+\end{problem}
+
+\begin{solution}
+    \textbf{实验内容、步骤及结果}
+
+    反幂法函数 \texttt{chap-4/inv\_pm.m}：
+
+\begin{lstlisting}[language=Matlab]
+function [x_values, lambda_values, iter] = inv_pm(A, x0, max_iter, tol, lambda0)
+    % Inverse Power Method for finding the smallest eigenvalue and eigenvector.
+
+    if nargin < 3
+        max_iter = inf;
+    end
+
+    if nargin < 4
+        tol = 0;
+    end
+
+    if nargin < 5
+        lambda0 = 0;
+    end
+
+    x = x0;
+    lambda = lambda0;
+    iter = 0;
+
+    A = A - lambda0 * eye(size(A));
+
+    x_values = x0;
+    lambda_values = lambda0;
+
+    while iter < max_iter
+        iter = iter + 1;
+        [~, idx] = max(abs(x));
+        x = x / x(idx);
+        [L, U] = lu(A);
+        y = L \ x;
+        x = U \ y;
+
+        [~, idx] = max(abs(x));
+        lambda_new = x(idx);
+
+        x_values(:, iter + 1) = x / lambda_new;
+        lambda_values(iter + 1) = 1 / lambda_new;
+
+        if tol > 0
+            if abs(1 / lambda_new - 1 / lambda) < tol
+                return;
+            end
+        end
+
+        lambda = lambda_new;
+    end
+
+    if tol > 0
+        warning('Inv power method did not converge within the maximum number of iterations');
+    end
+end
+\end{lstlisting}
+
+    主程序 \texttt{chap-4/P121\_Q2.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the input matrix A and initial guess x0
+A = [12, 6, -6; 6, 16, 2; -6, 2, 16];
+x0 = [1; 1; 1];
+
+[x_values_pm, lambda_values_pm, iter_pm] = pm(A, x0, 3);
+
+lambda0 = floor(lambda_values_pm(end));
+
+disp('lambda0:');
+disp(lambda0);
+
+[x_values_inv, lambda_values_inv, iter_inv] = inv_pm(A, x0, inf, 1e-10, lambda0);
+
+disp('Number of inv_pm iterations performed:');
+disp(iter_inv);
+
+disp('First 3 lambda_values:');
+disp(lambda_values_inv(1:3) + lambda0);
+
+disp('Latest x_value:');
+disp(x_values_inv(:, end));
+
+disp('Latest lambda_value:');
+disp(lambda_values_inv(end) + lambda0);
+
+disp('Eigenvalues of A calculated using MATLAB built-in function:');
+disp(eig(A));
+\end{lstlisting}
+
+    输出结果如下：
+
+\begin{lstlisting}
+>> P121_Q2
+lambda0:
+    19
+
+Number of inv_pm iterations performed:
+    25
+
+First 3 lambda_values:
+   38.0000   18.1395   17.8959
+
+Latest x_value:
+   -0.0000
+    1.0000
+    1.0000
+
+Latest lambda_value:
+   18.0000
+
+Eigenvalues of A calculated using MATLAB built-in function:
+    4.4560
+   18.0000
+   21.5440
+\end{lstlisting}
+
+    使用幂法迭代 3 次后得到位移 $\lambda^\ast = 19$。随后对 $A-\lambda^\ast I$ 使用反幂法，等价于寻找最靠近 $\lambda^\ast$ 的特征值。最终结果收敛到
+    \[
+        \lambda = 18.0000,
+        \qquad
+        x \approx (0,1,1)^{\mathrm{T}},
+    \]
+    与 MATLAB 内置函数 \texttt{eig} 的结果一致。
+\end{solution}
+
+
+% =========================================
+% 补充代码
+% =========================================
+\begin{problem}{补充代码：P120. Q1, Q3, Q4}
+\end{problem}
+
+    \texttt{chap-4/P120\_Q1.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the input matrix A and initial guess x0
+A = [-4, 14, 0; -5, 13, 0; -1, 0, 2];
+% A = [4, -1, 1; -1, 3, -2; 1, -2, 3];
+x0 = [1; 0; 0];
+max_iter = 10;
+
+disp('A:');
+disp(A);
+
+% Call the power method function
+[x_values, lambda_values, iter] = pm(A, x0, max_iter);
+
+disp('Number of iterations performed:');
+disp(iter);
+disp('First 3 x_values:');
+disp(x_values(:, 1:3));
+disp('First 3 lambda_values:');
+disp(lambda_values(1:3));
+disp('Latest x_value:');
+disp(x_values(:, end));
+disp('Latest lambda_value:');
+disp(lambda_values(end));
+\end{lstlisting}
+
+    \texttt{chap-4/P120\_Q3.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the input matrix A and initial guess x0
+A = [1, 2, 3; 2, 3, 4; 3, 4, 5];
+x0 = [1; 0; 0];
+max_iter = inf;
+lambda0 = 9.6;
+
+% Call the power method function
+[x_values, lambda_values, iter] = inv_pm(A, x0, max_iter, 1e-16, lambda0);
+
+disp('Number of iterations performed:');
+disp(iter);
+disp('First 3 x_values:');
+disp(x_values(:, 1:3));
+disp('First 3 lambda_values:');
+disp(lambda_values(1:3) + lambda0);
+disp('Latest x_value:');
+disp(x_values(:, end));
+disp('Latest lambda_value:');
+disp(lambda_values(end) + lambda0);
+\end{lstlisting}
+
+    \texttt{chap-4/P120\_Q4.m}：
+
+\begin{lstlisting}[language=Matlab]
+% Define the input matrix A and initial guess x0
+A = [2, 1, 0; 1, 3, 1; 0, 1, 4];
+x0 = [1; 0; 0];
+max_iter = inf;
+lambda0 = 1.2679;
+
+% Call the inv power method function
+[x_values, lambda_values, iter] = inv_pm(A, x0, max_iter, 1e-16, lambda0);
+
+disp('Number of iterations performed:');
+disp(iter);
+disp('First 3 x_values:');
+disp(x_values(:, 1:3));
+disp('First 3 lambda_values:');
+disp(lambda_values(1:3) + lambda0);
+disp('Latest x_value:');
+disp(x_values(:, end));
+disp('Latest lambda_value:');
+disp(lambda_values(end) + lambda0);
+\end{lstlisting}
+
+    运行输出摘要如下：
+
+\begin{lstlisting}
+>> P120_Q1
+A:
+    -4    14     0
+    -5    13     0
+    -1     0     2
+
+Number of iterations performed:
+    10
+
+First 3 x_values:
+    1.0000    0.8000    1.0000
+         0    1.0000    0.8333
+         0    0.2000   -0.0370
+
+First 3 lambda_values:
+         0   -5.0000   10.8000
+
+Latest x_value:
+    1.0000
+    0.7146
+   -0.2490
+
+Latest lambda_value:
+    6.0084
+
+>> P120_Q1
+A:
+     4    -1     1
+    -1     3    -2
+     1    -2     3
+
+Latest x_value:
+    1.0000
+   -0.9971
+    0.9971
+
+Latest lambda_value:
+    5.9883
+
+>> P120_Q3
+Number of iterations performed:
+     8
+
+Latest x_value:
+    0.5247
+    0.7623
+    1.0000
+
+Latest lambda_value:
+    9.6235
+
+>> P120_Q4
+Number of iterations performed:
+     5
+
+Latest x_value:
+    1.0000
+   -0.7321
+    0.2679
+
+Latest lambda_value:
+    1.2679
+\end{lstlisting}
+
+\end{document}
