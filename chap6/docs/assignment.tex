@@ -1,0 +1,531 @@
+\documentclass[11pt, a4paper]{ctexart}
+
+\usepackage{assignment_style}
+
+\begin{document}
+
+\begin{center}
+    \textbf{最小二乘 $m$ 次拟合多项式}
+\end{center}
+
+设
+\[
+    P_m(x)=\sum_{k=0}^{m}a_kx^k,
+\]
+则系数向量 $\bm a=(a_0,\ldots,a_m)^{\mathrm T}$ 满足正规方程组
+\[
+    \begin{pmatrix}
+        \sum x_i^0 & \sum x_i^1 & \cdots & \sum x_i^m \\
+        \sum x_i^1 & \sum x_i^2 & \cdots & \sum x_i^{m+1} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        \sum x_i^m & \sum x_i^{m+1} & \cdots & \sum x_i^{2m}
+    \end{pmatrix}
+    \bm a
+    =
+    \begin{pmatrix}
+        \sum y_ix_i^0 \\
+        \sum y_ix_i^1 \\
+        \vdots \\
+        \sum y_ix_i^m
+    \end{pmatrix}.
+\]
+
+% =========================================
+% 1
+% =========================================
+\begin{problem}{1. 已知数据表如下：}
+    \[
+        \begin{array}{c|cccccccc}
+            x_i & 1.36 & 1.49 & 1.73 & 1.81 & 1.95 & 2.16 & 2.28 & 2.48 \\ \hline
+            y_i & 14.094 & 15.069 & 16.844 & 17.378 & 18.435 & 19.949 & 20.963 & 22.495
+        \end{array}
+    \]
+    求其一次最小二乘拟合多项式。
+\end{problem}
+
+\begin{solution}
+    取拟合多项式
+    \[
+        P_1(x)=a_0+a_1x.
+    \]
+    计算各和式：
+    \[
+        \sum x_i^0=8,\qquad \sum x_i=15.26,\qquad \sum x_i^2=30.1556,
+    \]
+    \[
+        \sum y_i=145.227,\qquad \sum x_iy_i=284.8363.
+    \]
+    因而正规方程为
+    \[
+        \begin{pmatrix}
+            8 & 15.26 \\
+            15.26 & 30.1556
+        \end{pmatrix}
+        \begin{pmatrix}
+            a_0 \\
+            a_1
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            145.227 \\
+            284.8363
+        \end{pmatrix}.
+    \]
+    解得
+    \[
+        a_0=3.9161,\qquad a_1=7.4639.
+    \]
+    所以一次最小二乘拟合多项式为
+    \[
+        P_1(x)=3.9161+7.4639x.
+    \]
+\end{solution}
+
+
+% =========================================
+% 2
+% =========================================
+\begin{problem}{2. 已知数据表如下：}
+    \[
+        \begin{array}{c|ccccccccc}
+            x_i & 1 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline
+            y_i & 10 & 5 & 4 & 2 & 1 & 1 & 2 & 3 & 4
+        \end{array}
+    \]
+    求其二次最小二乘拟合多项式。
+\end{problem}
+
+\begin{solution}
+    设
+    \[
+        P_2(x)=a_0+a_1x+a_2x^2.
+    \]
+    计算得到
+    \[
+        \sum x_i^0=9,\qquad \sum x_i=53,\qquad \sum x_i^2=381,
+    \]
+    \[
+        \sum x_i^3=3017,\qquad \sum x_i^4=25317,
+    \]
+    \[
+        \sum y_i=32,\qquad \sum x_iy_i=147,\qquad \sum x_i^2y_i=1025.
+    \]
+    故正规方程组为
+    \[
+        \begin{pmatrix}
+            9 & 53 & 381 \\
+            53 & 381 & 3017 \\
+            381 & 3017 & 25317
+        \end{pmatrix}
+        \begin{pmatrix}
+            a_0 \\
+            a_1 \\
+            a_2
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            32 \\
+            147 \\
+            1025
+        \end{pmatrix}.
+    \]
+    解得
+    \[
+        a_0=13.4597,\qquad a_1=-3.6053,\qquad a_2=0.2676.
+    \]
+    因而二次最小二乘拟合多项式为
+    \[
+        P_2(x)=13.4597-3.6053x+0.2676x^2.
+    \]
+\end{solution}
+
+
+% =========================================
+% 4
+% =========================================
+\begin{problem}{4. 用最小二乘法求一形如 $y=a+bx^2$（$a,b$ 为常数）的经验公式拟合下列数据：}
+    \[
+        \begin{array}{c|ccccc}
+            x_i & 19 & 25 & 31 & 38 & 44 \\ \hline
+            y_i & 19.0 & 32.3 & 49.0 & 73.3 & 97.8
+        \end{array}
+    \]
+\end{problem}
+
+\begin{solution}
+    令
+    \[
+        X_i=x_i^2,
+    \]
+    则问题化为对线性模型
+    \[
+        y=a+bX
+    \]
+    作一次最小二乘拟合。此时
+    \[
+        \sum X_i^0=5,\qquad \sum X_i=5327,\qquad \sum X_i^2=7277699,
+    \]
+    \[
+        \sum y_i=271.4,\qquad \sum X_iy_i=369320.
+    \]
+    因而正规方程为
+    \[
+        \begin{pmatrix}
+            5 & 5327 \\
+            5327 & 7277699
+        \end{pmatrix}
+        \begin{pmatrix}
+            a \\
+            b
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            271.4 \\
+            369320
+        \end{pmatrix}.
+    \]
+    解得
+    \[
+        a=0.9726,\qquad b=0.0500.
+    \]
+    所求经验公式为
+    \[
+        y=0.9726+0.0500x^2.
+    \]
+\end{solution}
+
+
+% =========================================
+% 6
+% =========================================
+\begin{problem}{6. 用最小二乘法求一形如 $y=ae^{bx}$ 的经验公式拟合下列数据：}
+    \[
+        \begin{array}{c|cccccccc}
+            x_i & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\ \hline
+            y_i & 15.3 & 20.5 & 27.4 & 36.6 & 49.1 & 65.6 & 87.87 & 117.6
+        \end{array}
+    \]
+\end{problem}
+
+\begin{solution}
+    对模型
+    \[
+        y=ae^{bx}
+    \]
+    两边取对数，得
+    \[
+        \ln y=\ln a+bx.
+    \]
+    令
+    \[
+        Y_i=\ln y_i,\qquad c=\ln a,
+    \]
+    则转化为线性模型
+    \[
+        Y=c+bx.
+    \]
+    由数据得
+    \[
+        \sum x_i^0=8,\qquad \sum x_i=36,\qquad \sum x_i^2=204,
+    \]
+    \[
+        \sum Y_i=29.9795,\qquad \sum x_iY_i=147.1406.
+    \]
+    故正规方程为
+    \[
+        \begin{pmatrix}
+            8 & 36 \\
+            36 & 204
+        \end{pmatrix}
+        \begin{pmatrix}
+            c \\
+            b
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            29.9795 \\
+            147.1406
+        \end{pmatrix}.
+    \]
+    解得
+    \[
+        c=2.4367,\qquad b=0.2913.
+    \]
+    因而
+    \[
+        a=e^c=e^{2.4367}\approx 11.4358.
+    \]
+    所求经验公式为
+    \[
+        y=11.4358e^{0.2913x}.
+    \]
+\end{solution}
+
+
+% =========================================
+% 7
+% =========================================
+\begin{problem}{7. 某化学反应中，测得生成物的质量浓度 $y$ 与时间 $t$ 的关系见下表：}
+    \[
+        \begin{array}{c|cccccccccc}
+            t_i & 1 & 2 & 3 & 4 & 6 & 8 & 10 & 12 & 14 & 16 \\ \hline
+            y_i & 4.00 & 6.41 & 8.01 & 8.79 & 9.53 & 9.86 & 10.33 & 10.42 & 10.53 & 10.61
+        \end{array}
+    \]
+    用最小二乘法求一形如
+    \[
+        y=\frac{t}{at+b}
+    \]
+    的经验公式。
+\end{problem}
+
+\begin{solution}
+    将模型改写为
+    \[
+        \frac{1}{y}=a+\frac{b}{t}.
+    \]
+    令
+    \[
+        X_i=\frac{1}{t_i},\qquad Y_i=\frac{1}{y_i},
+    \]
+    则问题转化为线性拟合
+    \[
+        Y=a+bX.
+    \]
+    由实验数据可得
+    \[
+        \sum X_i^0=10,\qquad \sum X_i=2.6923,\qquad \sum X_i^2=1.4930,
+    \]
+    \[
+        \sum Y_i=1.2330,\qquad \sum X_iY_i=0.4586.
+    \]
+    因而正规方程为
+    \[
+        \begin{pmatrix}
+            10 & 2.6923 \\
+            2.6923 & 1.4930
+        \end{pmatrix}
+        \begin{pmatrix}
+            a \\
+            b
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            1.2330 \\
+            0.4586
+        \end{pmatrix}.
+    \]
+    解得
+    \[
+        a=0.0789,\qquad b=0.1649.
+    \]
+    所求经验公式为
+    \[
+        y=\frac{t}{0.0789t+0.1649}.
+    \]
+\end{solution}
+
+
+% =========================================
+% 10
+% =========================================
+\begin{problem}{10. 证明：函数系 $\{\varphi_0,\ldots,\varphi_n\}$ 线性无关的充要条件是 Gram 行列式}
+    \[
+        G(\varphi_0,\ldots,\varphi_n)\neq 0.
+    \]
+\end{problem}
+
+\begin{myproof}
+    记 Gram 矩阵为
+    \[
+        G=\bigl((\varphi_i,\varphi_j)\bigr)_{i,j=0}^{n}.
+    \]
+
+    \textbf{必要性} 若 $\{\varphi_0,\ldots,\varphi_n\}$ 线性无关，则对任意非零向量
+    \[
+        \bm a=(a_0,\ldots,a_n)^{\mathrm T}\neq \bm 0,
+    \]
+    定义
+    \[
+        \varphi=\sum_{i=0}^{n}a_i\varphi_i.
+    \]
+    由线性无关性知 $\varphi\neq 0$，于是
+    \[
+        (\varphi,\varphi)>0.
+    \]
+    另一方面，
+    \[
+        (\varphi,\varphi)=\sum_{i=0}^{n}\sum_{j=0}^{n}a_i a_j(\varphi_i,\varphi_j)
+        =\bm a^{\mathrm T}G\bm a.
+    \]
+    因而对任意非零 $\bm a$ 有
+    \[
+        \bm a^{\mathrm T}G\bm a>0,
+    \]
+    即 $G$ 正定，从而
+    \[
+        \det G\neq 0.
+    \]
+
+    \textbf{充分性} 若 $\det G\neq 0$，设
+    \[
+        \sum_{i=0}^{n}a_i\varphi_i=0.
+    \]
+    将上式分别与 $\varphi_j\ (j=0,1,\ldots,n)$ 作内积，得
+    \[
+        \sum_{i=0}^{n}a_i(\varphi_i,\varphi_j)=0,\qquad j=0,1,\ldots,n.
+    \]
+    这就是齐次线性方程组
+    \[
+        G\bm a=0.
+    \]
+    由于 $\det G\neq 0$，该方程组只有零解，即
+    \[
+        \bm a=0.
+    \]
+    故 $\{\varphi_0,\ldots,\varphi_n\}$ 线性无关。
+
+    综上，函数系 $\{\varphi_0,\ldots,\varphi_n\}$ 线性无关当且仅当 $G(\varphi_0,\ldots,\varphi_n)\neq 0$。
+\end{myproof}
+
+
+% =========================================
+% 12
+% =========================================
+\begin{problem}{12. 求 $f(x)=\cos x,\ x\in\left[-\dfrac{\pi}{2},\dfrac{\pi}{2}\right]$ 在}
+    \[
+        H=\operatorname{Span}\{1,x^2,x^4\}
+    \]
+    中的最佳平方逼近多项式。
+\end{problem}
+
+\begin{solution}
+    取基函数
+    \[
+        \varphi_0(x)=1,\qquad \varphi_1(x)=x^2,\qquad \varphi_2(x)=x^4,
+    \]
+    设最佳平方逼近多项式为
+    \[
+        p(x)=a_0+a_1x^2+a_2x^4.
+    \]
+    在内积
+    \[
+        (f,g)=\int_{-\pi/2}^{\pi/2}f(x)g(x)\,\dif x
+    \]
+    下，系数满足正规方程
+    \[
+        A\bm a=\bm b,
+    \]
+    其中
+    \[
+        A=\bigl((\varphi_i,\varphi_j)\bigr)_{i,j=0}^{2},\qquad
+        \bm b=\bigl((f,\varphi_0),(f,\varphi_1),(f,\varphi_2)\bigr)^{\mathrm T}.
+    \]
+    计算得
+    \[
+        A=
+        \begin{pmatrix}
+            3.1416 & 2.5839 & 3.8252 \\
+            2.5839 & 3.8252 & 6.7417 \\
+            3.8252 & 6.7417 & 12.9380
+        \end{pmatrix},
+        \qquad
+        \bm b=
+        \begin{pmatrix}
+            2.0000 \\
+            0.9348 \\
+            0.9585
+        \end{pmatrix}.
+    \]
+    解得
+    \[
+        a_0=0.9996,\qquad a_1=-0.4964,\qquad a_2=0.0372.
+    \]
+    所以最佳平方逼近多项式为
+    \[
+        p(x)=0.9996-0.4964x^2+0.0372x^4.
+    \]
+\end{solution}
+
+
+% =========================================
+% 13(1)
+% =========================================
+\begin{problem}{13.(1) 求函数 $f(x)=\sqrt{x}$ 在区间 $[0,1]$ 上关于 $f(x)$ 的一次最佳平方逼近多项式。}
+\end{problem}
+
+\begin{solution}
+    设所求一次多项式为
+    \[
+        p_1(x)=a_0+a_1x.
+    \]
+    取基函数
+    \[
+        \varphi_0(x)=1,\qquad \varphi_1(x)=x.
+    \]
+    在内积
+    \[
+        (f,g)=\int_{0}^{1}f(x)g(x)\,\dif x
+    \]
+    下，正规方程为
+    \[
+        \begin{pmatrix}
+            (\varphi_0,\varphi_0) & (\varphi_1,\varphi_0) \\
+            (\varphi_0,\varphi_1) & (\varphi_1,\varphi_1)
+        \end{pmatrix}
+        \begin{pmatrix}
+            a_0 \\
+            a_1
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            (f,\varphi_0) \\
+            (f,\varphi_1)
+        \end{pmatrix}.
+    \]
+    计算得
+    \[
+        A=
+        \begin{pmatrix}
+            1 & \dfrac{1}{2} \\
+            \dfrac{1}{2} & \dfrac{1}{3}
+        \end{pmatrix},
+        \qquad
+        \bm b=
+        \begin{pmatrix}
+            \displaystyle\int_{0}^{1}x^{1/2}\,\dif x \\
+            \displaystyle\int_{0}^{1}x^{3/2}\,\dif x
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            \dfrac{2}{3} \\
+            \dfrac{2}{5}
+        \end{pmatrix}.
+    \]
+    即
+    \[
+        \begin{pmatrix}
+            1 & \dfrac{1}{2} \\
+            \dfrac{1}{2} & \dfrac{1}{3}
+        \end{pmatrix}
+        \begin{pmatrix}
+            a_0 \\
+            a_1
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            \dfrac{2}{3} \\
+            \dfrac{2}{5}
+        \end{pmatrix}.
+    \]
+    解得
+    \[
+        a_0=\frac{4}{15},\qquad a_1=\frac{4}{5}.
+    \]
+    因而一次最佳平方逼近多项式为
+    \[
+        p_1(x)=\frac{4}{15}+\frac{4}{5}x.
+    \]
+\end{solution}
+
+\end{document}
