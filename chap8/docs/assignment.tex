@@ -1,0 +1,422 @@
+\documentclass[11pt, a4paper, fontset=none]{ctexart}
+
+\usepackage{assignment_style}
+
+\begin{document}
+
+% =========================================
+% P288. Q1(1)
+% =========================================
+\begin{problem}{P288. Q1(1)}
+    用对分区间法求方程
+    \[
+        x-\ln x=2
+    \]
+    在区间 $[2,4]$ 内的根，要求误差不超过 $10^{-5}$。
+\end{problem}
+
+\begin{solution}
+    令
+    \[
+        f(x)=x-\ln x-2.
+    \]
+    因为
+    \[
+        f(2)=-\ln 2<0,\qquad
+        f(4)=2-\ln 4>0,
+    \]
+    所以 $[2,4]$ 内存在根。
+
+    对分法第 $n$ 次分半后的区间长度为
+    \[
+        \frac{b-a}{2^n}=\frac{2}{2^n}.
+    \]
+    为使区间长度不超过 $10^{-5}$，取
+    \[
+        \frac{2}{2^n}\le 10^{-5},
+        \qquad n\ge \left\lceil \log_2(2\times 10^5)\right\rceil=18.
+    \]
+    经过 $18$ 次二分，得到
+    \[
+        x\approx 3.146191.
+    \]
+    因此所求根为
+    \[
+        \boxed{x\approx 3.146191}.
+    \]
+\end{solution}
+
+
+% =========================================
+% P288. Q2
+% =========================================
+\begin{problem}{P288. Q2}
+    已知方程
+    \[
+        x^3-x^2-1=0
+    \]
+    在 $x_0=1.5$ 附近有根，试判断下列迭代格式：
+    \[
+        \text{(1)}\ x_{n+1}=1+\frac{1}{x_n^2},\qquad
+        \text{(2)}\ x_{n+1}=\sqrt{\frac{1}{x_n-1}},
+    \]
+    \[
+        \text{(3)}\ x_{n+1}=\sqrt[3]{1+x_n^2}
+    \]
+    在 $x_0=1.5$ 附近的收敛性。选一种迭代格式计算 $1.5$ 附近的根，要求结果具有 $5$ 位有效数字。
+\end{problem}
+
+\begin{solution}
+    将三个迭代格式分别记为 $x=\varphi_i(x)$。
+
+    \textbf{(1)}
+    \[
+        \varphi_1(x)=1+\frac{1}{x^2},\qquad
+        \varphi_1'(x)=-\frac{2}{x^3}.
+    \]
+    在 $x=1.5$ 处，
+    \[
+        |\varphi_1'(1.5)|=\frac{2}{1.5^3}\approx 0.5926<1,
+    \]
+    故该迭代格式在根附近收敛。
+
+    \textbf{(2)}
+    \[
+        \varphi_2(x)=(x-1)^{-1/2},\qquad
+        \varphi_2'(x)=-\frac{1}{2}(x-1)^{-3/2}.
+    \]
+    在 $x=1.5$ 处，
+    \[
+        |\varphi_2'(1.5)|=\frac{1}{2(0.5)^{3/2}}\approx 1.4142>1,
+    \]
+    故该迭代格式在根附近不收敛。
+
+    \textbf{(3)}
+    \[
+        \varphi_3(x)=(1+x^2)^{1/3},
+    \]
+    \[
+        \varphi_3'(x)=\frac{2x}{3(1+x^2)^{2/3}}.
+    \]
+    在 $x=1.5$ 处，
+    \[
+        |\varphi_3'(1.5)|
+        =\frac{3}{3(3.25)^{2/3}}
+        \approx 0.4561<1,
+    \]
+    故该迭代格式在根附近收敛。
+
+    选用第 (1) 个迭代格式，从 $x_0=1.5$ 出发，按
+    \[
+        x_{n+1}=1+\frac{1}{x_n^2}
+    \]
+    迭代，并以
+    \[
+        |x_{n+1}-x_n|<5\times 10^{-5}
+    \]
+    作为停止条件，得到
+    \[
+        x\approx 1.465556.
+    \]
+    因而该根的 $5$ 位有效数字为
+    \[
+        \boxed{x\approx 1.4656}.
+    \]
+\end{solution}
+
+
+% =========================================
+% P288. Q3(1)
+% =========================================
+\begin{problem}{P288. Q3(1)}
+    用简单迭代法求方程
+    \[
+        x-\cos x=0
+    \]
+    的根，要求
+    \[
+        |x_{n+1}-x_n|<10^{-5}.
+    \]
+\end{problem}
+
+\begin{solution}
+    将方程写成等价的不动点形式
+    \[
+        x=\varphi(x)=\cos x.
+    \]
+    取区间 $[0,1]$，有
+    \[
+        f(0)=-1<0,\qquad f(1)=1-\cos 1>0,
+    \]
+    故根位于 $[0,1]$ 内。又
+    \[
+        \varphi([0,1])=[\cos 1,1]\subset [0,1],
+    \]
+    且
+    \[
+        |\varphi'(x)|=|\sin x|\le \sin 1<1,\qquad x\in[0,1].
+    \]
+    因此简单迭代在该区间内收敛。
+
+    取
+    \[
+        x_0=0.5,\qquad x_{n+1}=\cos x_n.
+    \]
+    迭代至 $|x_{n+1}-x_n|<10^{-5}$ 时，得到
+    \[
+        x\approx 0.739082.
+    \]
+    所求根为
+    \[
+        \boxed{x\approx 0.739082}.
+    \]
+\end{solution}
+
+
+% =========================================
+% P288. Q7
+% =========================================
+\begin{problem}{P288. Q7}
+    设有解方程
+    \[
+        12-3x+2\cos x=0
+    \]
+    的迭代法
+    \[
+        x_{n+1}=4+\frac{2}{3}\cos x_n.
+    \]
+    \begin{enumerate}[(1)]
+        \item 证明对 $\forall x_0\in\R$，此迭代法均收敛到方程的根；
+        \item 取 $x_0=4$，用此迭代法求方程根的近似值，使其误差不超过 $\dfrac{1}{2}\times 10^{-5}$。
+    \end{enumerate}
+\end{problem}
+
+\begin{solution}
+    记
+    \[
+        \varphi(x)=4+\frac{2}{3}\cos x.
+    \]
+    对任意 $x\in\R$，有
+    \[
+        \varphi(x)\in \left[4-\frac{2}{3},4+\frac{2}{3}\right]
+        =\left[\frac{10}{3},\frac{14}{3}\right]\subset \R.
+    \]
+    又
+    \[
+        \varphi'(x)=-\frac{2}{3}\sin x,
+    \]
+    因而
+    \[
+        |\varphi'(x)|\le \frac{2}{3}<1,\qquad x\in\R.
+    \]
+    由压缩映射原理，迭代
+    \[
+        x_{n+1}=\varphi(x_n)
+    \]
+    对任意初值 $x_0\in\R$ 均收敛到唯一不动点 $x^\ast$。该不动点满足
+    \[
+        x^\ast=4+\frac{2}{3}\cos x^\ast,
+    \]
+    即
+    \[
+        12-3x^\ast+2\cos x^\ast=0.
+    \]
+    故此迭代法对任意初值均收敛到方程的根。
+
+    取 $x_0=4$ 进行迭代。由上式可取压缩常数
+    \[
+        q=\frac{2}{3}.
+    \]
+    后验误差估计为
+    \[
+        |x^\ast-x_{n+1}|
+        \le \frac{q}{1-q}|x_{n+1}-x_n|
+        =2|x_{n+1}-x_n|.
+    \]
+    为使误差不超过 $\frac{1}{2}\times 10^{-5}$，只需令
+    \[
+        |x_{n+1}-x_n|<2.5\times 10^{-6}.
+    \]
+    迭代计算得
+    \[
+        x\approx 3.347403.
+    \]
+    因而所求近似根为
+    \[
+        \boxed{x\approx 3.347403}.
+    \]
+\end{solution}
+
+
+% =========================================
+% P288. Q10(1)
+% =========================================
+\begin{problem}{P288. Q10(1)}
+    用 Newton 法求解方程
+    \[
+        x-\ln x=2,
+    \]
+    要求
+    \[
+        |x_{n+1}-x_n|<10^{-6}.
+    \]
+\end{problem}
+
+\begin{solution}
+    令
+    \[
+        f(x)=x-\ln x-2,\qquad f'(x)=1-\frac{1}{x}.
+    \]
+    Newton 迭代公式为
+    \[
+        x_{n+1}
+        =x_n-\frac{f(x_n)}{f'(x_n)}
+        =x_n-\frac{x_n-\ln x_n-2}{1-\frac{1}{x_n}}.
+    \]
+    由于
+    \[
+        f\left(\frac18\right)>0,\qquad f(1)<0,
+    \]
+    可取
+    \[
+        x_0=\frac18.
+    \]
+    迭代结果如下：
+    \[
+        \begin{array}{c|cc}
+            n & x_n & f(x_n) \\ \hline
+            0 & 0.125000 & 2.0444\times 10^{-1} \\
+            1 & 0.154206 & 2.3672\times 10^{-2} \\
+            2 & 0.158522 & 3.8451\times 10^{-4} \\
+            3 & 0.158594 & 1.0437\times 10^{-7} \\
+            4 & 0.158594 & 7.5495\times 10^{-15}
+        \end{array}
+    \]
+    且
+    \[
+        |x_4-x_3|=1.9672\times 10^{-8}<10^{-6}.
+    \]
+    故所求根为
+    \[
+        \boxed{x\approx 0.158594}.
+    \]
+\end{solution}
+
+
+% =========================================
+% P288. Q13(1)
+% =========================================
+\begin{problem}{P288. Q13(1)}
+    若 $x^\ast$ 是方程 $f(x)=0$ 的 $r$ 重根，即
+    \[
+        f(x)=(x-x^\ast)^r\varphi(x),\qquad \varphi(x^\ast)\ne 0.
+    \]
+    证明：Newton 法在 $x^\ast$ 邻近是线性收敛的。
+\end{problem}
+
+\begin{myproof}
+    设
+    \[
+        e_n=x_n-x^\ast.
+    \]
+    因为
+    \[
+        f(x)= (x-x^\ast)^r\varphi(x),
+    \]
+    所以
+    \[
+        f'(x)
+        =(x-x^\ast)^{r-1}
+        \left[r\varphi(x)+(x-x^\ast)\varphi'(x)\right].
+    \]
+    Newton 法为
+    \[
+        x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}.
+    \]
+    于是
+    \[
+        e_{n+1}
+        =e_n-\frac{e_n^r\varphi(x_n)}
+        {e_n^{r-1}\left[r\varphi(x_n)+e_n\varphi'(x_n)\right]}.
+    \]
+    整理得
+    \[
+        e_{n+1}
+        =e_n
+        \frac{(r-1)\varphi(x_n)+e_n\varphi'(x_n)}
+        {r\varphi(x_n)+e_n\varphi'(x_n)}.
+    \]
+    当 $x_n\to x^\ast$ 时，$e_n\to 0$，且 $\varphi(x^\ast)\ne 0$，故
+    \[
+        \lim_{n\to\infty}\frac{|e_{n+1}|}{|e_n|}
+        =\frac{r-1}{r}.
+    \]
+    对 $r>1$，有
+    \[
+        0<\frac{r-1}{r}<1,
+    \]
+    因而 Newton 法在重根 $x^\ast$ 邻近为线性收敛，收敛因子为
+    \[
+        \boxed{\frac{r-1}{r}}.
+    \]
+\end{myproof}
+
+
+% =========================================
+% P288. Q16(1)
+% =========================================
+\begin{problem}{P288. Q16(1)}
+    试用割线法求解方程
+    \[
+        x-\ln x=2,
+    \]
+    要求
+    \[
+        |x_{n+1}-x_n|<10^{-5}.
+    \]
+\end{problem}
+
+\begin{solution}
+    令
+    \[
+        f(x)=x-\ln x-2.
+    \]
+    割线法迭代公式为
+    \[
+        x_{n+1}
+        =x_n-\frac{f(x_n)(x_n-x_{n-1})}{f(x_n)-f(x_{n-1})}.
+    \]
+    取实数定义域内的初值
+    \[
+        x_0=\frac18,\qquad x_1=\frac14.
+    \]
+    此时
+    \[
+        f\left(\frac18\right)>0,\qquad f\left(\frac14\right)<0,
+    \]
+    两初值夹住小根。
+
+    迭代结果如下：
+    \[
+        \begin{array}{c|cc}
+            n & x_n & f(x_n) \\ \hline
+            0 & 0.125000 & 2.0444\times 10^{-1} \\
+            1 & 0.250000 & -3.6371\times 10^{-1} \\
+            2 & 0.169980 & -5.7945\times 10^{-2} \\
+            3 & 0.154815 & 2.0338\times 10^{-2} \\
+            4 & 0.158755 & -8.5212\times 10^{-4} \\
+            5 & 0.158597 & -1.2094\times 10^{-5} \\
+            6 & 0.158594 & 7.2820\times 10^{-9}
+        \end{array}
+    \]
+    且
+    \[
+        |x_6-x_5|=2.2809\times 10^{-6}<10^{-5}.
+    \]
+    故所求根为
+    \[
+        \boxed{x\approx 0.158594}.
+    \]
+\end{solution}
+
+\end{document}
